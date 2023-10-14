@@ -1,0 +1,2 @@
+expression: -.*CALL.*
+mask: C:\Calls\rphost_*\*.log
