@@ -15,7 +15,11 @@ func main() {
 
 	conf := config.Get()
 
-	findedFiles, _ := filepath.Glob(conf.Mask)
+	findedFiles, err := filepath.Glob(conf.Mask)
+
+	if err != nil {
+		panic(err)
+	}
 
 	result := make(chan []string, len(findedFiles))
 
@@ -25,10 +29,10 @@ func main() {
 
 	for i := 0; i < len(findedFiles); i++ {
 		findedStrings = append(findedStrings, <-result...)
-
 	}
 
-	fmt.Println(len(findedStrings))
+	res := fmt.Sprintf("%d matches", len(findedStrings))
+	fmt.Println(res)
 
 }
 
