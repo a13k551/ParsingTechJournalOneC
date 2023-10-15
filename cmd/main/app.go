@@ -2,11 +2,10 @@ package main
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
-	"regexp"
 
 	"github.com/a13k551/ParsingTechJournalOneC/internal/config"
+	"github.com/a13k551/ParsingTechJournalOneC/internal/finder"
 )
 
 func main() {
@@ -24,7 +23,7 @@ func main() {
 	result := make(chan []string, len(findedFiles))
 
 	for _, filename := range findedFiles {
-		go findByRegExp(filename, conf.Expression, result)
+		go finder.FindByRegExp(filename, conf.Expression, result)
 	}
 
 	for i := 0; i < len(findedFiles); i++ {
@@ -33,34 +32,5 @@ func main() {
 
 	res := fmt.Sprintf("%d matches", len(findedStrings))
 	fmt.Println(res)
-
-}
-
-func findByRegExp(filename, expression string, result chan []string) {
-
-	var findedStrings []string
-
-	file, err := os.ReadFile(filename)
-
-	if err != nil {
-		panic(err)
-	}
-
-	myRedExp, err := regexp.Compile(expression)
-
-	if err != nil {
-		panic(err)
-	}
-
-	matchedStrings := myRedExp.FindAll(file, 10000)
-
-	for _, matchedStringByte := range matchedStrings {
-
-		matchedString := string(matchedStringByte[:])
-
-		findedStrings = append(findedStrings, matchedString)
-	}
-
-	result <- findedStrings
 
 }
