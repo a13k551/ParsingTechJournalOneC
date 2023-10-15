@@ -1,13 +1,14 @@
 package finder
 
-import (	
+import (
+	"fmt"
 	"os"
-	"regexp"
 	"path/filepath"
+	"regexp"
 )
 
-func FindStringsInFiles(mask, expression string) []string{
-	
+func FindStringsInFiles(mask, expression string) []string {
+
 	var findedStrings []string
 	findedFiles, err := filepath.Glob(mask)
 
@@ -39,19 +40,26 @@ func findByRegExp(filename, expression string, result chan []string) {
 		panic(err)
 	}
 
-	myRedExp, err := regexp.Compile(expression)
+	myRegExp, err := regexp.Compile("-[0-9]{7,15},CALL.*")
 
 	if err != nil {
 		panic(err)
 	}
 
-	matchedStrings := myRedExp.FindAll(file, 10000)
+	matchedStrings := myRegExp.FindAll(file, 100000)
 
 	for _, matchedStringByte := range matchedStrings {
 
-		matchedString := string(matchedStringByte[:])
+		replaceCallrRegexp, _ := regexp.Compile("CALL.*:")
+		replaceCall := replaceCallrRegexp.ReplaceAll(matchedStringByte, []byte(""))
 
+		replaceMemoryRegexp, _ := regexp.Compile(",Memory.*")
+		replaceMemory := replaceMemoryRegexp.ReplaceAll(replaceCall, []byte(""))
+
+		matchedString := string(replaceMemory[:])
 		findedStrings = append(findedStrings, matchedString)
+
+		fmt.Println(matchedString)
 	}
 
 	result <- findedStrings

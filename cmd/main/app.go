@@ -17,4 +17,7 @@ func main() {
 
 	fmt.Println(res)
 
+	for _, v := range findedStrings {
+		fmt.Println(v)
+	}
 }
