@@ -3,9 +3,33 @@ package finder
 import (	
 	"os"
 	"regexp"
+	"path/filepath"
 )
 
-func FindByRegExp(filename, expression string, result chan []string) {
+func FindFilesAndStrings(mask, expression string) []string{
+	
+	var findedStrings []string
+	findedFiles, err := filepath.Glob(mask)
+
+	if err != nil {
+		panic(err)
+	}
+
+	result := make(chan []string, len(findedFiles))
+
+	for _, filename := range findedFiles {
+		go findByRegExp(filename, expression, result)
+	}
+
+	for i := 0; i < len(findedFiles); i++ {
+		findedStrings = append(findedStrings, <-result...)
+	}
+
+	return findedStrings
+
+}
+
+func findByRegExp(filename, expression string, result chan []string) {
 
 	var findedStrings []string
 
