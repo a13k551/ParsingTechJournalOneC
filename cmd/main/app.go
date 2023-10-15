@@ -11,9 +11,10 @@ func main() {
 
 	conf := config.Get()
 
-	findedStrings := finder.FindFilesAndStrings(conf.Mask, conf.Expression)
+	findedStrings := finder.FindStringsInFiles(conf.Mask, conf.Expression)
 
 	res := fmt.Sprintf("%d matches", len(findedStrings))
+
 	fmt.Println(res)
 
 }

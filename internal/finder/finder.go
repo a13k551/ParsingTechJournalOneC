@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 )
 
-func FindFilesAndStrings(mask, expression string) []string{
+func FindStringsInFiles(mask, expression string) []string{
 	
 	var findedStrings []string
 	findedFiles, err := filepath.Glob(mask)
